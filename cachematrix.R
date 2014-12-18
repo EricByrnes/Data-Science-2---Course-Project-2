@@ -4,20 +4,22 @@ makeCacheMatrix <- function(x = matrix()) {
    # of recomputing this value.
    #
    # Args:
-   #   x: matrix data (used as the basis for the cache).
+   #   x (matrix) - matrix data (used as the basis for the cache).
    #
    # Returns:
-   #   List of functions to get/set the matrix and it's inverse.
+   #   list - list of functions to get/set the matrix and it's inverse.
+   #
+   # Example:
+   #   cm <- makeCacheMatrix(matrix(seq(1:4), 2, 2))
 
    m <- NULL
 
-   #
    # create setter/getter for underlying matrix
    set <- function(y) {
       # use the <<- operator to search into parent environments for the target
       # variable when this function is called; in this context, this behaves a
       # bit like a static variable reference because x, m will resolve to the
-      # same reference
+      # variables defined within this function.
       x <<- y
       # remove cached value, it will be recalculated on next cacheSolve call
       m <<- NULL
@@ -42,11 +44,16 @@ cacheSolve <- function(x, ...) {
    # stored for future reference, and returned.
    #
    # Args:
-   #   x: value returned by prior makeCacheMatrix call.
+   #   x (makeCacheMatrix result): value returned by prior makeCacheMatrix call.
    #   ...: additional function arguments to be passed to 'solve' call
    #
    # Returns:
-   #   Inverse of the matrix stored in the given cache-matrix.
+   #   Matrix - Inverse of the matrix stored in the given cache-matrix.
+   #
+   # Example:
+   #   cm <- makeCacheMatrix(matrix(seq(1:4), 2, 2))
+   #   cacheSolve(cm)   # initial inverse calculation
+   #   cacheSolve(cm)   # will retrieve inverse from cache
    
    # get and return existing (cached) value, if present
    xInverse <- x$getInverse()
@@ -58,5 +65,4 @@ cacheSolve <- function(x, ...) {
    xData <- x$get()
    xInverse <- solve(xData, ...)
    x$setInverse(xInverse)
-   xInverse
 }
